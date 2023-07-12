@@ -52,6 +52,10 @@ class ImageResourceHandler(ImageApiHandler):
         if not self.context.config.UPLOAD_PUT_ALLOWED:
             self._error(405, "Unable to modify an uploaded image")
             return
+        # Check security
+        if self._check_secret_key():
+            self._error(403, "Forbidden an uploaded image")
+            return
 
         # Check if the image uploaded is valid
         if self.validate(self.request.body):
@@ -63,6 +67,10 @@ class ImageResourceHandler(ImageApiHandler):
         # Check if image deleting is allowed
         if not self.context.config.UPLOAD_DELETE_ALLOWED:
             self._error(405, "Unable to delete an uploaded image")
+            return
+        # Check security
+        if self._check_secret_key():
+            self._error(403, "Forbidden an delete image")
             return
 
         # Check if image exists
